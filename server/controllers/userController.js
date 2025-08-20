@@ -5,12 +5,12 @@ import {
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
 } from "../constants/http.js";
-import { userService } from "../services/userServices.js";
+import { userServices } from "../services/userServices.js";
 
 export const userController = {
   async getAll(req, res) {
     try {
-      const user = await userService.getAll();
+      const user = await userServices.getAll();
       res.json(user);
     } catch (error) {
       res.status(INTERNAL_SERVER_ERROR).json({ error: error.message });
@@ -19,7 +19,7 @@ export const userController = {
 
   async getById(req, res) {
     try {
-      const user = await userService.getById(req.params.id);
+      const user = await userServices.getById(req.params.id);
       if (!user) {
         return res.status(NOT_FOUND).json({ error: "User not found" });
       }
@@ -37,7 +37,7 @@ export const userController = {
           .status(BAD_REQUEST)
           .json({ error: "Name and email are required" });
       }
-      const user = await userService.create(req.body);
+      const user = await userServices.create(req.body);
       res.status(CREATED).json(user);
     } catch (error) {
       if (error.code === "P2002") {
@@ -49,7 +49,7 @@ export const userController = {
 
   async update(req, res) {
     try {
-      const user = await userService.update(req.params.id, req.body);
+      const user = await userServices.update(req.params.id, req.body);
       res.json(user);
     } catch (error) {
       if (error.code === "P2025") {
@@ -64,7 +64,7 @@ export const userController = {
 
   async delete(req, res) {
     try {
-      await userService.delete(req.params.id);
+      await userServices.delete(req.params.id);
       res.json({ message: "User deleted successfully" });
     } catch (error) {
       if (error.code === "P2025") {

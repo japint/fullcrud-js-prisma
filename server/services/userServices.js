@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-export const userService = {
+export const userServices = {
   async getAll() {
     return prisma.user.findMany({
       include: { posts: true },
@@ -38,7 +38,7 @@ export const userService = {
     });
   },
 
-  async remove(id) {
+  async delete(id) {
     return prisma.user.delete({
       where: { id: parseInt(id) },
       include: { posts: true },
