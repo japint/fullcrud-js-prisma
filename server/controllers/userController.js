@@ -1,15 +1,17 @@
 import {
+  BAD_REQUEST,
   CONFLICT,
   CREATED,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
-} from "../constants/http";
-import { userService } from "../services/userServices";
+} from "../constants/http.js";
+import { userService } from "../services/userServices.js";
 
 export const userController = {
   async getAll(req, res) {
     try {
       const user = await userService.getAll();
+      res.json(user);
     } catch (error) {
       res.status(INTERNAL_SERVER_ERROR).json({ error: error.message });
     }
