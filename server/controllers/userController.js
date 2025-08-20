@@ -1,78 +1,40 @@
-import {
-  BAD_REQUEST,
-  CONFLICT,
-  CREATED,
-  INTERNAL_SERVER_ERROR,
-  NOT_FOUND,
-} from "../constants/http.js";
+import { BAD_REQUEST, CREATED, NOT_FOUND } from "../constants/http.js";
 import { userServices } from "../services/userServices.js";
 
 export const userController = {
-  async getAll(req, res) {
-    try {
-      const user = await userServices.getAll();
-      res.json(user);
-    } catch (error) {
-      res.status(INTERNAL_SERVER_ERROR).json({ error: error.message });
-    }
+  getAll: async (req, res) => {
+    const user = await userServices.getAll();
+    res.json(user);
   },
 
-  async getById(req, res) {
-    try {
-      const user = await userServices.getById(req.params.id);
-      if (!user) {
-        return res.status(NOT_FOUND).json({ error: "User not found" });
-      }
-      res.json(user);
-    } catch (error) {
-      res.status(INTERNAL_SERVER_ERROR).json({ error: error.message });
+  getById: async (req, res) => {
+    const user = await userServices.getById(req.params.id);
+    if (!user) {
+      const err = new Error("User not found");
+      err.status = NOT_FOUND;
+      throw err;
     }
+    res.json(user);
   },
 
-  async create(req, res) {
-    try {
-      const { name, email } = req.body;
-      if (!name || !email) {
-        return res
-          .status(BAD_REQUEST)
-          .json({ error: "Name and email are required" });
-      }
-      const user = await userServices.create(req.body);
-      res.status(CREATED).json(user);
-    } catch (error) {
-      if (error.code === "P2002") {
-        return res.status(CONFLICT).json({ error: "User already exists" });
-      }
-      res.status(INTERNAL_SERVER_ERROR).json({ error: error.message });
+  create: async (req, res) => {
+    const { name, email } = req.body;
+    if (!name || !email) {
+      const err = new Error("Name and email are required");
+      err.status = BAD_REQUEST;
+      throw err;
     }
+    const user = await userServices.create(req.body);
+    res.status(CREATED).json(user);
   },
 
-  async update(req, res) {
-    try {
-      const user = await userServices.update(req.params.id, req.body);
-      res.json(user);
-    } catch (error) {
-      if (error.code === "P2025") {
-        return res.status(NOT_FOUND).json({ error: "User not found" });
-      }
-      if (error.code === "P2002") {
-        return res.status(CONFLICT).json({ error: "User already exists" });
-      }
-      res.status(INTERNAL_SERVER_ERROR).json({ error: error.message });
-    }
+  update: async (req, res) => {
+    const user = await userServices.update(req.params.id, req.body);
+    res.json(user);
   },
 
-  async delete(req, res) {
-    try {
-      await userServices.delete(req.params.id);
-      res.json({ message: "User deleted successfully" });
-    } catch (error) {
-      if (error.code === "P2025") {
-        return res.status(NOT_FOUND).json({ error: "User not found" });
-      }
-      res.status(INTERNAL_SERVER_ERROR).json({ error: error.message });
-    }
+  delete: async (req, res) => {
+    await userServices.delete(req.params.id);
+    res.json({ message: "User deleted successfully" });
   },
 };
-
-export default userController;

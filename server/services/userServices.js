@@ -2,43 +2,46 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const userServices = {
-  async getAll() {
+  getAll: async () => {
     return prisma.user.findMany({
       include: { posts: true },
       orderBy: { createdAt: "desc" },
     });
   },
-  async getById(id) {
+
+  getById: async (id) => {
     return prisma.user.findUnique({
       where: { id: parseInt(id) },
       include: { posts: true },
     });
   },
 
-  async create(data) {
+  create: async (data) => {
+    const { name, email, age } = data;
     return prisma.user.create({
       data: {
-        name: data.name,
-        email: data.email,
-        age: data.age ? parseInt(data.age) : null,
+        name,
+        email,
+        age: age ? parseInt(age) : null,
       },
       include: { posts: true },
     });
   },
 
-  async update(id, data) {
+  update: async (id, data) => {
+    const { name, email, age } = data;
     return prisma.user.update({
       where: { id: parseInt(id) },
       data: {
-        name: data.name,
-        email: data.email,
-        age: data.age ? parseInt(data.age) : null,
+        name,
+        email,
+        age: age ? parseInt(age) : null,
       },
       include: { posts: true },
     });
   },
 
-  async delete(id) {
+  delete: async (id) => {
     return prisma.user.delete({
       where: { id: parseInt(id) },
       include: { posts: true },
