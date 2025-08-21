@@ -1,29 +1,18 @@
-import {
-  CONFLICT,
-  INTERNAL_SERVER_ERROR,
-  NOT_FOUND,
-} from "../constants/http.js";
+import { INTERNAL_SERVER_ERROR } from "../constants/http.js";
+import { handlePrismaError } from "../utils/prismaErrorHandler.js";
 
 export const errorHandler = (err, req, res, next) => {
-  console.error("Error", err);
+  console.error("Error caught", err);
 
   // Prisma specific error handling
-  if (err.code === "P2002") {
-    return res.status(CONFLICT).json({ error: "unique constraint failed" });
-  }
-
-  if (err.code === "P2025") {
-    return res.status(NOT_FOUND).json({ error: "Record not found" });
-  }
-
-  if (err.code === "P2003") {
-    return res
-      .status(CONFLICT)
-      .json({ error: "Foreign key constraint failed" });
+  if (err.code && err.code.startsWith("P")) {
+    const { status, message, detail } = handlePrismaError(err);
+    return res.status(status).json({ error: message, detail });
   }
 
   // Default
-  res.status(err.status || INTERNAL_SERVER_ERROR).json({
-    error: err.message || "Internal server error",
+  res.status(INTERNAL_SERVER_ERROR).json({
+    error: "Internal server error",
+    detail: err.message || "An unexpected error occurred",
   });
 };
