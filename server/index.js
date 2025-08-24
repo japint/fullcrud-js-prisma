@@ -1,11 +1,8 @@
-import dotenv from "dotenv";
-dotenv.config({ path: "../.env" });
-
 import app from "./app.js";
+import { config } from "./config/config.js";
 import prisma from "./config/prisma.js";
 
-const PORT = process.env.PORT || 3001;
-console.log("DATABASE_URL:", process.env.DATABASE_URL);
+const PORT = config.port;
 
 // Start server
 const server = app.listen(PORT, () => {
