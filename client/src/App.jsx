@@ -54,6 +54,7 @@ function App() {
 
   // --- User CRUD ---
   async function handleUserSubmit(e) {
+    console.log("Submitting userForm:", userForm);
     e.preventDefault();
     const userData = {
       name: userForm.name.trim(),

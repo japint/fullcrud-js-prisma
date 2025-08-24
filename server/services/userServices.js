@@ -21,7 +21,7 @@ export const userServices = {
       data: {
         name,
         email,
-        age: age ? parseInt(age) : null,
+        age,
       },
       include: { posts: true },
     });
