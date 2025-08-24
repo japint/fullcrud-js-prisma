@@ -7,6 +7,8 @@ import { userSchema } from "../validation/userValidation.js";
 const router = express.Router();
 // No validate needed for GET
 router.get("/", asyncHandler(userController.getAll));
+
+// validate needed for GetById
 router.get(
   "/:id",
   validate({ params: userSchema.params }),
