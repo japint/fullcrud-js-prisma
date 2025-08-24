@@ -1,4 +1,4 @@
-import { BAD_REQUEST, CREATED, NOT_FOUND } from "../constants/http.js";
+import { CREATED, NOT_FOUND } from "../constants/http.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { userServices } from "../services/userServices.js";
 
@@ -19,12 +19,7 @@ export const userController = {
   }),
 
   create: asyncHandler(async (req, res) => {
-    const { name, email } = req.body;
-    if (!name || !email) {
-      const err = new Error("Name and email are required");
-      err.status = BAD_REQUEST;
-      throw err;
-    }
+    // 🚀 No manual validation here — Zod has already sanitized & validated req.body
     const user = await userServices.create(req.body);
     res.status(CREATED).json(user);
   }),
