@@ -1,27 +1,37 @@
-export const validate =
-  ({ body, params, query }) =>
-  (req, res, next) => {
-    try {
-      if (body) {
-        const result = body.safeParse(req.body);
-        if (!result.success) return next(result.error);
-        req.body = result.data;
+export const validate = (schemas) => (req, res, next) => {
+  try {
+    if (schemas.body) {
+      const result = schemas.body.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({
+          // Use 'return' to stop execution
+          error: "Validation failed",
+          details: result.error.issues.map((i) => ({
+            field: i.path.join("."),
+            message: i.message,
+          })),
+        });
       }
-
-      if (params) {
-        const result = params.safeParse(req.params);
-        if (!result.success) return next(result.error);
-        req.params = result.data;
-      }
-
-      if (query) {
-        const result = query.safeParse(req.query);
-        if (!result.success) return next(result.error);
-        req.query = result.data;
-      }
-
-      next();
-    } catch (err) {
-      next(err);
+      req.body = result.data;
     }
-  };
+
+    if (schemas.params) {
+      const result = schemas.params.safeParse(req.params);
+      if (!result.success) {
+        return res.status(400).json({
+          // Use 'return' to stop execution
+          error: "Param validation failed",
+          details: result.error.issues.map((i) => ({
+            field: i.path.join("."),
+            message: i.message,
+          })),
+        });
+      }
+      req.params = result.data;
+    }
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
