@@ -7,17 +7,21 @@ import { userSchema } from "../validation/userValidation.js";
 const router = express.Router();
 // No validate needed for GET
 router.get("/", asyncHandler(userController.getAll));
-router.get("/:id", asyncHandler(userController.getById));
+router.get(
+  "/:id",
+  validate({ params: userSchema.params }),
+  asyncHandler(userController.getById)
+);
 
 // Validate applied for POST & PUT
 router.post(
   "/",
-  validate(userSchema.create),
+  validate({ body: userSchema.create }),
   asyncHandler(userController.create)
 );
 router.put(
   "/:id",
-  validate(userSchema.update),
+  validate({ params: userSchema.params, body: userSchema.update }),
   asyncHandler(userController.update)
 );
 
